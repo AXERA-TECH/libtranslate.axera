@@ -2,6 +2,7 @@
 #include "cmdline.hpp"
 #include <cstring>
 #include <cstdio>
+#include <fstream>
 
 class Translator
 {
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
     cmdline::parser parser;
     parser.add<std::string>("model", 'm', " model path for axmodel)", true);
     parser.add<std::string>("tokenizer_dir", 'k', "tokenizer dir", true);
-    parser.add<std::string>("text", 't', "text to translate", true);
+    parser.add<std::string>("text", 't', "text or .txt file to translate", true);
     parser.parse_check(argc, argv);
 
     std::string model_path = parser.get<std::string>("model");
@@ -109,8 +110,26 @@ int main(int argc, char *argv[])
         printf("init translator failed\n");
         return -1;
     }
-
-    std::string output = translator.Translate(text);
-    printf("output: %s\n", output.c_str());
+    if (text.find(".txt") != std::string::npos)
+    {
+        std::ifstream ifs(text);
+        if (!ifs.is_open())
+        {
+            printf("open file failed\n");
+            return -1;
+        }
+        std::string line;
+        while (std::getline(ifs, line))
+        {
+            std::string output = translator.Translate(line);
+            printf("input: %s, output: %s\n", line.c_str(), output.c_str());
+        }
+        ifs.close();
+    }
+    else
+    {
+        std::string output = translator.Translate(text);
+        printf("output: %s\n", output.c_str());
+    }
     return 0;
 }

@@ -86,10 +86,26 @@ int ax_translate_deinit(ax_translate_handle_t handle)
 int ax_translate(ax_translate_handle_t handle, ax_translate_io_t *io)
 {
     ax_translate_t *translate = (ax_translate_t *)handle;
+    if (translate == nullptr)
+    {
+        printf("translate is null\n");
+        return -1;
+    }
+    for (size_t i = 0; i < translate->m_runner->get_num_inputs(); i++)
+    {
+        memset(translate->m_runner->get_input(i).pVirAddr, 0, translate->m_runner->get_input(i).nSize);
+    }
+
     std::vector<int> output_ids;
     std::vector<int> input_ids;
     std::vector<int> mask;
     int len = translate->tokenizer.encode(io->input, MAX_LENGTH, false, input_ids, &mask);
+    // printf("len: %d [", len);
+    // for (int i = 0; i < len; i++)
+    // {
+    //     printf("%d ", input_ids[i]);
+    // }
+    // printf("]\n");
 
     std::vector<int> decoder_input_ids(MAX_LENGTH, translate->tokenizer.get_pad_id());
     std::vector<int> decoder_attention_mask(MAX_LENGTH, 0);
