@@ -44,10 +44,10 @@ add_library(ax_translate SHARED
                 )
 
 add_executable(test_llm tests/test_llm.cpp)
-target_link_libraries(test_llm PRIVATE ax_translate)
+target_link_libraries(test_llm PRIVATE ax_translate dl)
 
 add_executable(test_translate tests/test_translate.cpp)
-target_link_libraries(test_translate PRIVATE ax_translate)
+target_link_libraries(test_translate PRIVATE ax_translate dl)
 
 install(TARGETS ax_translate
     LIBRARY DESTINATION lib
