@@ -1,2 +1,3 @@
 build*
 .vscode
+pytranslate/__pycache__

@@ -328,7 +328,7 @@ int ax_runner_axcl::sub_init()
             tensor.pVirAddr = io_data.pInputs[i].pVirAddr;
             mgroup_input_tensors[grpid].push_back(tensor);
         }
-        print_io_info(mgroup_input_tensors[grpid], mgroup_output_tensors[grpid]);
+        // print_io_info(mgroup_input_tensors[grpid], mgroup_output_tensors[grpid]);
     }
 
     moutput_tensors = mgroup_output_tensors[0];

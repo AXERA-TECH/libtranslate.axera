@@ -404,7 +404,7 @@ int ax_runner_ax650::init(const void *model_data, unsigned int model_size, int d
             mgroup_input_tensors[grpid].push_back(tensor);
         }
 
-        print_io_info(mgroup_input_tensors[grpid], mgroup_output_tensors[grpid]);
+        // print_io_info(mgroup_input_tensors[grpid], mgroup_output_tensors[grpid]);
     }
 
     moutput_tensors = mgroup_output_tensors[0];

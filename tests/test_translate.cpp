@@ -52,7 +52,7 @@ public:
         }
     }
 
-    int Init(std::string model_path, std::string tokenizer_dir)
+    int Init(std::string config_path)
     {
         if (ax_devices.host.available)
         {
@@ -63,8 +63,7 @@ public:
             init.dev_type = axcl_device;
             init.devid = 0;
         }
-        sprintf(init.model_path, "%s", model_path.c_str());
-        sprintf(init.tokenizer_dir, "%s", tokenizer_dir.c_str());
+        sprintf(init.config_path, "%s", config_path.c_str());
 
         int ret = ax_translate_init(&init, &handle);
         if (ret != 0)
@@ -75,9 +74,11 @@ public:
         return 0;
     }
 
-    std::string Translate(std::string text)
+    std::string Translate(std::string text, ax_translate_target_language_e target = target_chs)
     {
         ax_translate_io_t io;
+        memset(&io, 0, sizeof(ax_translate_io_t));
+        io.target_language = target;
         sprintf(io.input, "%s", text.c_str());
         int ret = ax_translate(handle, &io);
         if (ret != 0)
@@ -92,19 +93,16 @@ public:
 
 int main(int argc, char *argv[])
 {
-    
     cmdline::parser parser;
-    parser.add<std::string>("model", 'm', " model path for axmodel)", true);
-    parser.add<std::string>("tokenizer_dir", 'k', "tokenizer dir", true);
+    parser.add<std::string>("config", 'c', " config path)", true);
     parser.add<std::string>("text", 't', "text or .txt file to translate", true);
     parser.parse_check(argc, argv);
 
-    std::string model_path = parser.get<std::string>("model");
-    std::string tokenizer_dir = parser.get<std::string>("tokenizer_dir");
+    std::string config_path = parser.get<std::string>("config");
     std::string text = parser.get<std::string>("text");
 
     Translator translator;
-    int ret = translator.Init(model_path, tokenizer_dir);
+    int ret = translator.Init(config_path);
     if (ret != 0)
     {
         printf("init translator failed\n");
