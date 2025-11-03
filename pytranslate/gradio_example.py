@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     # Gradio界面
     with gr.Blocks() as demo:
-        gr.Markdown("# 🔍 Det Demo")
+        gr.Markdown("# 🔍 Translate Demo")
         lang_dropdown = gr.Dropdown(
                 choices=lang_set,
                 value="英文",
