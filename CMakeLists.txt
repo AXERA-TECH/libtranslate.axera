@@ -45,7 +45,7 @@ add_library(ax_translate SHARED
 
 function(compile_test_case test_name)
     add_executable(${test_name} tests/${test_name}.cpp)
-    target_link_libraries(${test_name} PRIVATE ax_translate dl)
+    target_link_libraries(${test_name} PRIVATE ax_translate dl pthread)
     install(TARGETS ${test_name}
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
