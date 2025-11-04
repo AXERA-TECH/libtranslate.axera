@@ -33,7 +33,7 @@
 output: 你好，世界！
 ```
 
-## Gradio
+### Gradio
 ```shell
 python gradio_example.py --config ../build/config.json 
 ```
@@ -41,5 +41,17 @@ python gradio_example.py --config ../build/config.json
 ![jpn.png](pytranslate/jpn.png)
 ![thai.png](pytranslate/thai.png)
 
+### HTTP API
+#### 启动服务
+```shell
+./translate_svr -c config.json -h 0.0.0.0 -p 8080
+listen on http://0.0.0.0:8080
+```
+#### 调用服务
+```shell
+./translate_cli -h 0.0.0.0 -p 8080 -i "hello,world!" -t target_chs
+{"input":"hello,world!","output":"你好，世界！","target":"target_chs"}
+你好，世界！
+```
 ## 社区
 QQ 群: 139953715

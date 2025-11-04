@@ -43,11 +43,26 @@ add_library(ax_translate SHARED
                 src/utils/memory_utils.cpp
                 )
 
-add_executable(test_llm tests/test_llm.cpp)
-target_link_libraries(test_llm PRIVATE ax_translate dl)
+function(compile_test_case test_name)
+    add_executable(${test_name} tests/${test_name}.cpp)
+    target_link_libraries(${test_name} PRIVATE ax_translate dl)
+    install(TARGETS ${test_name}
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+    )
+endfunction(compile_test_case)
 
-add_executable(test_translate tests/test_translate.cpp)
-target_link_libraries(test_translate PRIVATE ax_translate dl)
+compile_test_case(test_llm)
+compile_test_case(test_translate)
+compile_test_case(translate_svr)
+
+add_executable(translate_cli tests/translate_cli.cpp)
+install(TARGETS translate_cli
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 
 install(TARGETS ax_translate
     LIBRARY DESTINATION lib
@@ -56,23 +71,3 @@ install(TARGETS ax_translate
 )
 install(DIRECTORY include DESTINATION include)
 install(DIRECTORY pytranslate DESTINATION lib/)
-
-# target_link_libraries(ax_translate PRIVATE sentencepiece dl)
-
-
-# add_executable(test_translate tests/test_translate.cpp)
-# target_link_libraries(test_translate PRIVATE ax_translate)
-
-# install(TARGETS ax_translate
-#     LIBRARY DESTINATION lib
-#     ARCHIVE DESTINATION lib
-#     RUNTIME DESTINATION bin
-# )
-
-# install(TARGETS test_translate
-#     LIBRARY DESTINATION lib
-#     ARCHIVE DESTINATION lib
-#     RUNTIME DESTINATION bin
-# )
-
-# install(FILES include/ax_translate.h include/ax_devices.h DESTINATION include)
