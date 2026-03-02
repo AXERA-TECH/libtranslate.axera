@@ -86,6 +86,7 @@ async function startMeeting() {
     const data = JSON.parse(event.data);
     if (data.type === 'transcript') {
       addLogItem(data.start_ms, data.end_ms, data.text || '', data.translation || '');
+    }
   };
 
   ws.onopen = async () => {

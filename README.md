@@ -11,6 +11,9 @@
 ## 模型获取
 请使用对应模型目录（包含 `config.json` 和 `*.axmodel` 等文件）。
 
+### VAD/ASR (ax_meeting)
+模型来源：`https://huggingface.co/AXERA-TECH/3D-Speaker-MT.Axera`
+
 ## 配置文件
 根据模型目录的 `config.json` 内容调整路径配置。
 ```json
@@ -34,6 +37,18 @@
 ```shell
 ./test_translate -m /path/to/model_dir -t "hello,world!" -l "Chinese"
 output: 你好，世界！
+```
+
+### Web 实时翻译
+```shell
+./run_web_rt.sh
+```
+访问 `https://<设备IP>:8001`（自签证书首次需要手动信任）。
+可选环境变量：
+```shell
+TRANS_MODEL_DIR=/path/to/translate_model \
+PORT=8001 HOST=0.0.0.0 \
+./run_web_rt.sh
 ```
 
 ### Gradio

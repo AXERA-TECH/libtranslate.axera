@@ -3,8 +3,6 @@ set -e
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-export AX_MEETING_ROOT=${AX_MEETING_ROOT:-/home/axera/AXERA-TECH/3D-Speaker-MT.Axera}
-export ASR_MODEL_DIR=${ASR_MODEL_DIR:-${AX_MEETING_ROOT}/ax_meeting/ax_model}
 export TRANS_MODEL_DIR=${TRANS_MODEL_DIR:-/home/axera/ax-llm/build_650/axllm-models/HY-MT1.5-1.8B_GPTQ_INT4}
 export HOST=${HOST:-0.0.0.0}
 export PORT=${PORT:-8001}
@@ -21,8 +19,6 @@ if [ ! -f "${CERT_FILE}" ] || [ ! -f "${KEY_FILE}" ]; then
     -subj "/CN=localhost"
 fi
 
-echo "AX_MEETING_ROOT = ${AX_MEETING_ROOT}"
-echo "ASR_MODEL_DIR   = ${ASR_MODEL_DIR}"
 echo "TRANS_MODEL_DIR = ${TRANS_MODEL_DIR}"
 echo "HOST            = ${HOST}"
 echo "PORT            = ${PORT}"
