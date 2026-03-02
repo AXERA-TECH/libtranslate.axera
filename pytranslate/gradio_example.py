@@ -1,9 +1,5 @@
-import os
 import gradio as gr
 from pytranslate import AXTranslate
-from pyaxdev import enum_devices, sys_init, sys_deinit, AxDeviceType
-import cv2
-import glob
 import argparse
 import subprocess
 import re
@@ -23,48 +19,24 @@ def get_all_local_ips():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str)
+    parser.add_argument('--model_dir', type=str, required=True)
     args = parser.parse_args()
 
-    # 初始化
-    dev_type = AxDeviceType.unknown_device
-    dev_id = -1
-    devices_info = enum_devices()
-    print("可用设备:", devices_info)
-    if devices_info['host']['available']:
-        print("host device available")
-        sys_init(AxDeviceType.host_device, -1)
-        dev_type = AxDeviceType.host_device
-        dev_id = -1
-    elif devices_info['devices']['count'] > 0:
-        print("axcl device available, use device-0")
-        sys_init(AxDeviceType.axcl_device, 0)
-        dev_type = AxDeviceType.axcl_device
-        dev_id = 0
-    else:
-        raise Exception("No available device")
-
- 
-    translate = AXTranslate(
-        config_path=args.config,
-        dev_type=dev_type,
-        devid=dev_id,
-    )
+    translate = AXTranslate(model_dir=args.model_dir)
     
-    lang_set= ["简体中文", "繁体中文", "英文","泰语","韩语" ,"日语"]
+    lang_set= ["Chinese", "Traditional Chinese", "English", "Thai", "Korean", "Japanese"]
     
     def translate_text(text, lang):
-        lang = lang_set.index(lang)
         results = translate.translate(text, lang)
         return results
 
 
     # Gradio界面
     with gr.Blocks() as demo:
-        gr.Markdown("# 🔍 Translate Demo")
+        gr.Markdown("# Translate Demo")
         lang_dropdown = gr.Dropdown(
                 choices=lang_set,
-                value="英文",
+                value="English",
                 label="选择目标语言"
             )
         with gr.Row():
@@ -83,11 +55,5 @@ if __name__ == '__main__':
     
     
     del translate
-    
-    import atexit
-    if devices_info['host']['available']:
-        atexit.register(lambda: sys_deinit(AxDeviceType.host_device, -1))
-    elif devices_info['devices']['count'] > 0:
-        atexit.register(lambda: sys_deinit(AxDeviceType.axcl_device, 0))
     
     

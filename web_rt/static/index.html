@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>实时语音翻译</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div>
+        <h1>实时语音翻译</h1>
+        <p>VAD + ASR + 翻译（WebSocket 实时）</p>
+      </div>
+      <div class="controls">
+        <select id="langSelect" class="select">
+          <option value="Chinese">Chinese</option>
+          <option value="English" selected>English</option>
+          <option value="Japanese">Japanese</option>
+          <option value="Korean">Korean</option>
+          <option value="Thai">Thai</option>
+        </select>
+        <button id="startBtn" class="btn primary">开始</button>
+        <button id="stopBtn" class="btn" disabled>停止</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>实时片段</h2>
+      <div id="liveLog" class="log"></div>
+    </section>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

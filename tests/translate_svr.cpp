@@ -2,7 +2,6 @@
 #include "cmdline.hpp"
 #include "httplib.h"
 #include "json.hpp"
-#include "magic_enum.hpp"
 #include <cstring>
 #include <cstdio>
 #include <fstream>
@@ -19,34 +18,13 @@ void __sigExit(int iSigNo)
 class Translator
 {
 private:
-    ax_devices_t ax_devices;
     ax_translate_init_t init;
     ax_translate_handle_t handle;
 
 public:
     Translator()
     {
-        memset(&ax_devices, 0, sizeof(ax_devices_t));
-        if (ax_dev_enum_devices(&ax_devices) != 0)
-        {
-            printf("enum devices failed\n");
-            return;
-        }
-
-        if (ax_devices.host.available)
-        {
-            ax_dev_sys_init(host_device, -1);
-        }
-
-        if (ax_devices.devices.count > 0)
-        {
-            ax_dev_sys_init(axcl_device, 0);
-        }
-        else
-        {
-            printf("no device available\n");
-            return;
-        }
+        memset(&init, 0, sizeof(ax_translate_init_t));
     }
     ~Translator()
     {
@@ -54,28 +32,11 @@ public:
         {
             ax_translate_deinit(handle);
         }
-        if (ax_devices.host.available)
-        {
-            ax_dev_sys_deinit(host_device, -1);
-        }
-        else if (ax_devices.devices.count > 0)
-        {
-            ax_dev_sys_deinit(axcl_device, 0);
-        }
     }
 
-    int Init(std::string config_path)
+    int Init(const std::string &model_dir)
     {
-        if (ax_devices.host.available)
-        {
-            init.dev_type = host_device;
-        }
-        else if (ax_devices.devices.count > 0)
-        {
-            init.dev_type = axcl_device;
-            init.devid = 0;
-        }
-        sprintf(init.config_path, "%s", config_path.c_str());
+        snprintf(init.model_dir, AX_PATH_LEN, "%s", model_dir.c_str());
 
         int ret = ax_translate_init(&init, &handle);
         if (ret != 0)
@@ -86,12 +47,12 @@ public:
         return 0;
     }
 
-    std::string Translate(std::string text, ax_translate_target_language_e target = target_chs)
+    std::string Translate(const std::string &text, const std::string &target = "target_chs")
     {
         ax_translate_io_t io;
         memset(&io, 0, sizeof(ax_translate_io_t));
-        io.target_language = target;
-        sprintf(io.input, "%s", text.c_str());
+        snprintf(io.target_language, sizeof(io.target_language), "%s", target.c_str());
+        snprintf(io.input, AX_TRANSLATE_MAX_LEN, "%s", text.c_str());
         int ret = ax_translate(handle, &io);
         if (ret != 0)
         {
@@ -107,18 +68,25 @@ int main(int argc, char *argv[])
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, __sigExit);
     cmdline::parser parser;
-    parser.add<std::string>("config", 'c', " config path)", true);
+    parser.add<std::string>("model_dir", 'm', "model directory (contains config.json)", true);
     parser.add<std::string>("host", 'h', "host to listen", false, "0.0.0.0");
     parser.add<int>("port", 'p', "port to listen", true);
     parser.parse_check(argc, argv);
 
-    std::string config_path = parser.get<std::string>("config");
+    std::string model_dir = parser.get<std::string>("model_dir");
 
+    int sys_ret = ax_translate_sys_init();
+    if (sys_ret != 0)
+    {
+        printf("system init failed\n");
+        return -1;
+    }
     Translator translator;
-    int ret = translator.Init(config_path);
+    int ret = translator.Init(model_dir);
     if (ret != 0)
     {
         printf("init translator failed\n");
+        ax_translate_sys_deinit();
         return -1;
     }
     int port = parser.get<int>("port");
@@ -127,26 +95,21 @@ int main(int argc, char *argv[])
     std::function<void(const httplib::Request &req, httplib::Response &res)> translate_handler = [&](const httplib::Request &req, httplib::Response &res)
     {
         nlohmann::json json = nlohmann::json::parse(req.body);
-        std::string text = json["input"];
-        std::string target = json["target"];
-
-        if (target.empty())
-        {
-            target = "target_chs";
-        }
+        std::string text = json.value("input", "");
+        std::string language = json.value("language", "Chinese");
         if (text.empty())
         {
             res.set_content("text is empty", "text/plain");
             return;
         }
 
-        ax_translate_target_language_e target_language = magic_enum::enum_cast<ax_translate_target_language_e>(target).value_or(target_chs);
-        std::string output = translator.Translate(text, target_language);
+        std::string output = translator.Translate(text, language);
         if (output.empty())
         {
             res.set_content("translate failed", "text/plain");
             return;
         }
+        json["language"] = language;
         json["output"] = output;
         res.set_content(json.dump(), "application/json");
     };
@@ -157,8 +120,10 @@ int main(int argc, char *argv[])
     if (!success)
     {
         printf("listen failed\n");
+        ax_translate_sys_deinit();
         return -1;
     }
 
+    ax_translate_sys_deinit();
     return 0;
 }

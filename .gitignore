@@ -1,3 +1,7 @@
 build*
 .vscode
 pytranslate/__pycache__
+__pycache__
+pytranslate/x86_64
+pytranslate/aarch64
+web_rt/certs

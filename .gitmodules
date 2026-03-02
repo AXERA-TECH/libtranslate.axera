@@ -1,0 +1,3 @@
+[submodule "third-party/tokenizer"]
+	path = third-party/tokenizer
+	url = https://github.com/ZHEQIUSHUI/tokenizer

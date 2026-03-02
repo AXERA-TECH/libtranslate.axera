@@ -1,7 +1,7 @@
-#include "httplib.h"
-#include "http_utils.hpp"
 #include "cmdline.hpp"
 #include "json.hpp"
+#include "httplib.h"
+#include "http_utils.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -9,12 +9,12 @@ int main(int argc, char *argv[])
     parser.add<std::string>("host", 'h', "host to connect", true);
     parser.add<int>("port", 'p', "port to connect", true);
     parser.add<std::string>("input", 'i', "input text", true);
-    parser.add<std::string>("target", 't', "target language", false, "target_chs");
+    parser.add<std::string>("language", 'l', "target language", false, "Chinese");
     parser.parse_check(argc, argv);
     std::string host = parser.get<std::string>("host");
     int port = parser.get<int>("port");
     std::string input = parser.get<std::string>("input");
-    std::string target = parser.get<std::string>("target");
+    std::string language = parser.get<std::string>("language");
 
     int cnt = 10;
     while (cnt--)
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
     nlohmann::json json;
     json["input"] = input;
-    json["target"] = target;
+    json["language"] = language;
 
     httplib::Client cli(host, port);
     auto res = cli.Post("/translate", json.dump(), "application/json");
