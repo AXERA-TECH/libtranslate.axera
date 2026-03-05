@@ -9,33 +9,19 @@
 ```
 
 ## 模型获取
-请使用对应模型目录（包含 `config.json` 和 `*.axmodel` 等文件）。
+[HY-MT1.5-1.8B_GPTQ_INT4](https://huggingface.co/AXERA-TECH/HY-MT1.5-1.8B_GPTQ_INT4)
+```
+hf clone AXERA-TECH/HY-MT1.5-1.8B_GPTQ_INT4 --local-dir ./HY-MT1.5-1.8B_GPTQ_INT4
+```
 
 ### VAD/ASR (ax_meeting)
 模型来源：`https://huggingface.co/AXERA-TECH/3D-Speaker-MT.Axera`
-
-## 配置文件
-根据模型目录的 `config.json` 内容调整路径配置。
-```json
-{
-    "template_filename_axmodel": "qwen2.5-1.5b-ctx-ax650/qwen2_p128_l%d_together.axmodel",
-    "axmodel_num": 28,
-    "url_tokenizer_model": "./tests/tokenizer/qwen2_5_tokenizer.txt",
-    "filename_post_axmodel": "qwen2.5-1.5b-ctx-ax650/qwen2_post.axmodel",
-    "filename_tokens_embed": "qwen2.5-1.5b-ctx-ax650/model.embed_tokens.weight.bfloat16.bin",
-    "tokens_embed_num": 151936,
-    "tokens_embed_size": 1536,
-    "use_mmap_load_embed": 1,
-    "tokenizer_type": "HunYuan",
-    "post_config_path": "post_config.json"
-}
-```
 
 ## 用例
 
 ### C++
 ```shell
-./test_translate -m /path/to/model_dir -t "hello,world!" -l "Chinese"
+./test_translate -m /path/to/HY-MT1.5-1.8B_GPTQ_INT4 -t "hello,world!" -l "Chinese"
 output: 你好，世界！
 ```
 
@@ -46,14 +32,14 @@ output: 你好，世界！
 访问 `https://<设备IP>:8001`（自签证书首次需要手动信任）。
 可选环境变量：
 ```shell
-TRANS_MODEL_DIR=/path/to/translate_model \
+TRANS_MODEL_DIR=/path/to/HY-MT1.5-1.8B_GPTQ_INT4 \
 PORT=8001 HOST=0.0.0.0 \
 ./run_web_rt.sh
 ```
 
 ### Gradio
 ```shell
-python pytranslate/gradio_example.py --model_dir /path/to/model_dir
+python pytranslate/gradio_example.py --model_dir /path/to/HY-MT1.5-1.8B_GPTQ_INT4
 ```
 ![chs.png](pytranslate/chs.png)
 ![jpn.png](pytranslate/jpn.png)
@@ -62,7 +48,7 @@ python pytranslate/gradio_example.py --model_dir /path/to/model_dir
 ### HTTP API
 #### 启动服务
 ```shell
-./translate_svr -m /path/to/model_dir -h 0.0.0.0 -p 8080
+./translate_svr -m /path/to/HY-MT1.5-1.8B_GPTQ_INT4 -h 0.0.0.0 -p 8080
 listen on http://0.0.0.0:8080
 ```
 #### 调用服务
