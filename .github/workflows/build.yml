@@ -8,38 +8,56 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-x86:
-    name: x86 Build
+  build-ax650:
+    name: AX650 Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare 3rdparty
         run: git submodule update --init
 
-      - name: Build x86
-        run: sh ./build.sh
+      - name: Build AX650
+        run: bash ./build_ax650.sh
 
-      - name: Upload x86 artifact
+      - name: Upload AX650 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-x86
-          path: build/install/
+          name: build-ax650
+          path: build_650/install/
 
-  build-aarch64:
-    name: aarch64 Build
+  build-axcl-x86:
+    name: AXCL x86 Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare 3rdparty
         run: git submodule update --init
 
-      - name: Build aarch64
-        run: sh ./build_aarch64.sh
+      - name: Build AXCL x86
+        run: bash ./build_axcl_x86.sh
 
-      - name: Upload aarch64 artifact
+      - name: Upload AXCL x86 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-aarch64
-          path: build_aarch64/install/
+          name: build-axcl-x86
+          path: build_axcl_x86/install/
+
+  build-axcl-aarch64:
+    name: AXCL aarch64 Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare 3rdparty
+        run: git submodule update --init
+
+      - name: Build AXCL aarch64
+        run: bash ./build_axcl_aarch64.sh
+
+      - name: Upload AXCL aarch64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-axcl-aarch64
+          path: build_axcl_aarch64/install/

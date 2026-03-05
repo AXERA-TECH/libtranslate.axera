@@ -3,6 +3,7 @@
 import asyncio
 import json
 import os
+import socket
 import sys
 import threading
 from dataclasses import dataclass, field
@@ -258,7 +259,38 @@ async def ws_endpoint(ws: WebSocket):
 if __name__ == "__main__":
     import uvicorn
 
+    def _get_local_ip() -> str:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+                # No packets are sent; this is used to resolve outbound interface.
+                sock.connect(("8.8.8.8", 80))
+                return sock.getsockname()[0]
+        except OSError:
+            return "127.0.0.1"
+
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8001"))
-    print(f"Web RT Translate: http://{host}:{port}")
-    uvicorn.run("web_rt.server:app", host=host, port=port, reload=False)
+    ssl_cert = os.getenv("SSL_CERT")
+    ssl_key = os.getenv("SSL_KEY")
+    use_ssl = bool(
+        ssl_cert
+        and ssl_key
+        and Path(ssl_cert).is_file()
+        and Path(ssl_key).is_file()
+    )
+
+    display_host = _get_local_ip() if host in {"0.0.0.0", "::"} else host
+    scheme = "https" if use_ssl else "http"
+    print(f"Web RT Translate: {scheme}://{display_host}:{port}")
+
+    uvicorn_kwargs = {
+        "app": "web_rt.server:app",
+        "host": host,
+        "port": port,
+        "reload": False,
+    }
+    if use_ssl:
+        uvicorn_kwargs["ssl_certfile"] = ssl_cert
+        uvicorn_kwargs["ssl_keyfile"] = ssl_key
+
+    uvicorn.run(**uvicorn_kwargs)

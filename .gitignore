@@ -5,3 +5,4 @@ __pycache__
 pytranslate/x86_64
 pytranslate/aarch64
 web_rt/certs
+dataset

@@ -7,6 +7,17 @@
 ./build_axcl_x86.sh      # AXCL x86 编译
 ./build_axcl_aarch64.sh  # AXCL aarch64 交叉编译
 ```
+编译成功之后 build目录应有以下文件
+```
+(base) axera@dell:~/libtranslate.axera/build_axcl$ tree
+.
+├── CMakeCache.txt
+├── libax_translate.so
+├── Makefile
+├── test_translate # 测试用例
+├── translate_cli  # 调用服务用例
+└── translate_svr  # 服务端程序
+```
 
 ## 模型获取
 [HY-MT1.5-1.8B_GPTQ_INT4](https://huggingface.co/AXERA-TECH/HY-MT1.5-1.8B_GPTQ_INT4)
@@ -36,6 +47,7 @@ TRANS_MODEL_DIR=/path/to/HY-MT1.5-1.8B_GPTQ_INT4 \
 PORT=8001 HOST=0.0.0.0 \
 ./run_web_rt.sh
 ```
+![web_rt.png](web_rt/image.png)
 
 ### Gradio
 ```shell
