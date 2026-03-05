@@ -44,6 +44,7 @@ output: 你好，世界！
 可选环境变量：
 ```shell
 TRANS_MODEL_DIR=/path/to/HY-MT1.5-1.8B_GPTQ_INT4 \
+AX_MEETING_ROOT=/path/to/3D-Speaker-MT.Axera \
 PORT=8001 HOST=0.0.0.0 \
 ./run_web_rt.sh
 ```
@@ -51,6 +52,7 @@ PORT=8001 HOST=0.0.0.0 \
 
 ### Gradio
 ```shell
+pip install gradio
 python pytranslate/gradio_example.py --model_dir /path/to/HY-MT1.5-1.8B_GPTQ_INT4
 ```
 ![chs.png](pytranslate/chs.png)
